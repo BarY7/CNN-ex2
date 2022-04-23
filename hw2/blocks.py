@@ -1,6 +1,6 @@
 import abc
 import torch
-
+import numpy as np
 
 class Block(abc.ABC):
     """
@@ -56,6 +56,12 @@ class Block(abc.ABC):
         """
         self.training_mode = training_mode
 
+def compute_specific_matrix(x, x_wt, c,d):
+    len_rows = x.shape[0]
+    T = torch.zeros_like(x_wt)
+    for i in range(len_rows):
+        T[i][c] = x[i][d]
+    return T
 
 class Linear(Block):
     """
@@ -73,9 +79,9 @@ class Linear(Block):
         self.out_features = out_features
 
         # TODO: Create the weight matrix (w) and bias vector (b).
-
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        self.w = torch.from_numpy(np.random.normal(scale=wstd, size=(out_features, in_features))).float()
+        self.b = torch.from_numpy(np.random.normal(scale=wstd, size=(out_features))).float() # assumed std same as weights
         # ========================
 
         self.dw = torch.zeros_like(self.w)
@@ -100,7 +106,9 @@ class Linear(Block):
         # TODO: Compute the affine transform
 
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        wt = torch.t(self.w).float()
+        x_wt = torch.matmul(x, wt)
+        out = x_wt + self.b
         # ========================
 
         self.grad_cache['x'] = x
@@ -119,7 +127,15 @@ class Linear(Block):
         #   - db, the gradient of the loss with respect to b
         # You should accumulate gradients in dw and db.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        self.db += torch.matmul(torch.ones(dout.shape[0]), dout)
+        # wt = torch.t(self.w).float()
+        # x_wt = torch.matmul(x, wt)
+        # dz_dw = torch.tensor([[ compute_specific_matrix(x, x_wt, c, d) for c in range(self.out_features)] for d in range(self.in_features)])
+        # self.dw = torch.matmul(dout,dz_dw)
+        self.dw += torch.matmul(x.t(),dout).t()  # (Dout,N)x(N,Dout) -> (Dout, Din)
+        dx =  torch.matmul(dout ,self.w)
+
+        # ========================
         # ========================
 
         return dx
@@ -145,7 +161,7 @@ class ReLU(Block):
 
         # TODO: Implement the ReLU operation.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        out = torch.max(torch.zeros_like(x), x)
         # ========================
 
         self.grad_cache['x'] = x
@@ -160,7 +176,8 @@ class ReLU(Block):
 
         # TODO: Implement gradient w.r.t. the input x
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        relu_dx = (x > 0).float()
+        dx = relu_dx * dout
         # ========================
 
         return dx
@@ -190,7 +207,8 @@ class Sigmoid(Block):
         # TODO: Implement the Sigmoid function. Save whatever you need into
         # grad_cache.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        out = 1 / (1 + torch.exp(-x))
+        self.grad_cache['e_x'] = torch.exp(-x)
         # ========================
 
         return out
@@ -203,7 +221,8 @@ class Sigmoid(Block):
 
         # TODO: Implement gradient w.r.t. the input x
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        sig_dev_x =  self.grad_cache['e_x'] / ((1 + self.grad_cache['e_x'] ) * (1 + self.grad_cache['e_x'] ))
+        dx = sig_dev_x * dout 
         # ========================
 
         return dx
@@ -247,7 +266,9 @@ class CrossEntropyLoss(Block):
         # Tip: to get a different column from each row of a matrix tensor m,
         # you can index it with m[range(num_rows), list_of_cols].
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        x_sub_y = -1 * x[range(N),y]
+        sum_log_exp = torch.log(torch.exp(x).sum(dim=1))
+        loss = (x_sub_y + sum_log_exp).mean()
         # ========================
 
         self.grad_cache['x'] = x
@@ -266,7 +287,13 @@ class CrossEntropyLoss(Block):
 
         # TODO: Calculate the gradient w.r.t. the input x
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        sum_exp = torch.exp(x).sum()
+        exp_x = torch.exp(x)
+        exp_x__sum_exp = exp_x / sum_exp
+        exp_x__sum_exp[range(N),y] -= 1
+        dx = dout * 
+        
+        exp_x__sum_exp
         # ========================
 
         return dx
