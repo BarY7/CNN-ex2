@@ -287,13 +287,14 @@ class CrossEntropyLoss(Block):
 
         # TODO: Calculate the gradient w.r.t. the input x
         # ====== YOUR CODE: ======
-        sum_exp = torch.exp(x).sum()
+        # minus_x_y = -x[range(N),y]
+        # sum_log_exp = sum_exp.log()
         exp_x = torch.exp(x)
-        exp_x__sum_exp = exp_x / sum_exp
+        sum_exp = exp_x.sum(dim=1)
+        exp_x__sum_exp = exp_x / sum_exp.unsqueeze(0).t()
         exp_x__sum_exp[range(N),y] -= 1
-        dx = dout * 
-        
-        exp_x__sum_exp
+        # dx = -sum_exp.log_softmax(dim=y)
+        dx = dout * exp_x__sum_exp / N # Not sure why we need to divide by N here!!!!
         # ========================
 
         return dx
@@ -351,7 +352,9 @@ class Sequential(Block):
         # TODO: Implement the forward pass by passing each block's output
         # as the input of the next.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        out = x
+        for block in self.blocks:
+            out = block.forward(out)
         # ========================
 
         return out
@@ -363,7 +366,9 @@ class Sequential(Block):
         # Each block's input gradient should be the previous block's output
         # gradient. Behold the backpropagation algorithm in action!
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        din = dout
+        for block in self.blocks:
+            din = block.backward(din).t()
         # ========================
 
         return din
@@ -373,7 +378,8 @@ class Sequential(Block):
 
         # TODO: Return the parameter tuples from all blocks.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        for block in blocks:
+            params.append(block.params())
         # ========================
 
         return params
