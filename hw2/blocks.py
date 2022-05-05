@@ -273,7 +273,7 @@ class CrossEntropyLoss(Block):
 
         self.grad_cache['x'] = x
         self.grad_cache['y'] = y
-        return loss
+        return loss 
 
     def backward(self, dout=1.0):
         """
@@ -354,7 +354,7 @@ class Sequential(Block):
         # ====== YOUR CODE: ======
         out = x
         for block in self.blocks:
-            out = block.forward(out)
+            out = block.forward(out, **kw)
         # ========================
 
         return out
@@ -367,8 +367,8 @@ class Sequential(Block):
         # gradient. Behold the backpropagation algorithm in action!
         # ====== YOUR CODE: ======
         din = dout
-        for block in self.blocks:
-            din = block.backward(din).t()
+        for block in self.blocks[::-1]:
+            din = block.backward(din)
         # ========================
 
         return din
@@ -378,8 +378,8 @@ class Sequential(Block):
 
         # TODO: Return the parameter tuples from all blocks.
         # ====== YOUR CODE: ======
-        for block in blocks:
-            params.append(block.params())
+        for block in self.blocks:
+            params.extend(block.params())
         # ========================
 
         return params

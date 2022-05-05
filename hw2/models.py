@@ -33,7 +33,13 @@ class MLP(Block):
 
         # TODO: Build the MLP architecture as described.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        dims = [in_features, *hidden_features, num_classes]
+        for i in range(len(dims) - 1):
+            input_dim = dims[i]
+            out_dim = dims[i+1]
+            blocks.append(Linear(input_dim,out_dim))
+            if(i != len(dims) - 2): # not last block
+                blocks.append(ReLU() if activation == 'relu' else Sigmoid())
         # ========================
 
         self.sequence = Sequential(*blocks)
@@ -90,7 +96,7 @@ class ConvClassifier(nn.Module):
         # Use only dimension-preserving 3x3 convolutions. Apply 2x2 Max
         # Pooling to reduce dimensions.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        # raise NotImplementedError()
 
         # ========================
         seq = nn.Sequential(*layers)
@@ -105,7 +111,7 @@ class ConvClassifier(nn.Module):
         # You'll need to calculate the number of features first.
         # The last Linear layer should have an output dimension of out_classes.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        # raise NotImplementedError()
         # ========================
         seq = nn.Sequential(*layers)
         return seq
@@ -115,7 +121,7 @@ class ConvClassifier(nn.Module):
         # Extract features from the input, run the classifier on them and
         # return class scores.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        # raise NotImplementedError()
         # ========================
         return out
 
@@ -129,6 +135,6 @@ class YourCodeNet(ConvClassifier):
     # For example, add batchnorm, dropout, skip connections, change conv
     # filter sizes etc.
     # ====== YOUR CODE: ======
-    raise NotImplementedError()
+    # raise NotImplementedError()
     # ========================
 
