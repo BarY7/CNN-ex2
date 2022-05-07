@@ -3,6 +3,7 @@ import os
 import sys
 import tqdm
 import torch
+import numpy as np
 
 from torch.utils.data import DataLoader
 from typing import Callable, Any
@@ -72,7 +73,12 @@ class Trainer(abc.ABC):
             # - Optional: Implement early stopping. This is a very useful and
             #   simple regularization technique that is highly recommended.
             # ====== YOUR CODE: ======
-            raise NotImplementedError()
+            train_res = self.train_epoch(dl_train=dl_train, verbose=verbose)
+            test_res = self.test_epoch(dl_test=dl_test, verbose=verbose)
+            train_loss.append([sum(train_res.losses)/len(train_res.losses)])
+            train_acc.append(train_res.accuracy)
+            test_loss.append([sum(test_res.losses)/len(test_res.losses)])
+            test_acc.append(test_res.accuracy)
             # ========================
 
         return FitResult(actual_num_epochs,
@@ -188,7 +194,17 @@ class BlocksTrainer(Trainer):
         # - Optimize params
         # - Calculate number of correct predictions
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+
+        #zero grad
+        self.optimizer.zero_grad()
+
+        pred_y = self.model.forward(X)
+        loss = self.loss_fn(pred_y,y)
+        loss_grad = self.loss_fn.backward()
+        self.model.backward(loss_grad)
+        self.optimizer.step()
+        scores = pred_y.argmax(dim=1)
+        num_correct = (scores == y).sum()
         # ========================
 
         return BatchResult(loss, num_correct)
@@ -200,7 +216,10 @@ class BlocksTrainer(Trainer):
         # - Forward pass
         # - Calculate number of correct predictions
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        pred_y = self.model.forward(X)
+        scores = pred_y.argmax(dim=1)
+        loss = self.loss_fn(pred_y,y)
+        num_correct = (scores == y).sum()
         # ========================
 
         return BatchResult(loss, num_correct)
@@ -222,7 +241,11 @@ class TorchTrainer(Trainer):
         # - Optimize params
         # - Calculate number of correct predictions
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        pred_y = self.model.forward(X)
+        loss = self.loss_fn(pred_y,y)
+        loss_grad = loss.backward()
+        self.optimizer.step(loss_grad)
+        num_correct = 0
         # ========================
 
         return BatchResult(loss, num_correct)

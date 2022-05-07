@@ -1,4 +1,5 @@
 import abc
+from dataclasses import replace
 import torch
 import numpy as np
 
@@ -318,7 +319,13 @@ class Dropout(Block):
         # previous blocks, this block behaves differently a according to the
         # current mode (train/test).
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        self.rands = 0
+        if(not self.training_mode):
+            out = (1-self.p) * x
+        else:
+            raw_rands = torch.rand(size=x.shape)
+            self.rands = (raw_rands > self.p).int()
+            out = x * self.rands
         # ========================
 
         return out
@@ -326,7 +333,10 @@ class Dropout(Block):
     def backward(self, dout):
         # TODO: Implement the dropout backward pass.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        if(self.training_mode):
+            dx = self.rands * dout
+        else:
+            dx = (1-self.p) * dout
         # ========================
 
         return dx

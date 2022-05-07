@@ -40,6 +40,8 @@ class MLP(Block):
             blocks.append(Linear(input_dim,out_dim))
             if(i != len(dims) - 2): # not last block
                 blocks.append(ReLU() if activation == 'relu' else Sigmoid())
+                if(dropout > 0):
+                    blocks.append(Dropout(p=dropout))
         # ========================
 
         self.sequence = Sequential(*blocks)

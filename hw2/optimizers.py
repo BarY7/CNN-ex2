@@ -71,7 +71,8 @@ class VanillaSGD(Optimizer):
             # Update the gradient according to regularization and then
             # update the parameters tensor.
             # ====== YOUR CODE: ======
-            raise NotImplementedError()
+            dp += self.reg * p
+            p -= self.learn_rate * dp
             # ========================
 
 
@@ -90,19 +91,26 @@ class MomentumSGD(Optimizer):
 
         # TODO: Add your own initializations as needed.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        self.vt = [torch.zeros_like(params[i][1]) for i in range(len(params))]
         # ========================
 
     def step(self):
+        k = 0 
         for p, dp in self.params:
             if dp is None:
+                k += 1
                 continue
 
             # TODO: Implement the optimizer step.
             # update the parameters tensor based on the velocity. Don't forget
             # to include the regularization term.
             # ====== YOUR CODE: ======
-            raise NotImplementedError()
+            dp += self.reg * p
+            # cur_vt = self.vt[k]
+            self.vt[k] *= self.momentum
+            self.vt[k] -= self.learn_rate * dp
+            p += self.vt[k]
+            k += 1
             # ========================
 
 
@@ -123,12 +131,14 @@ class RMSProp(Optimizer):
 
         # TODO: Add your own initializations as needed.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        self.rt = [torch.zeros_like(params[i][1]) for i in range(len(params))]
         # ========================
 
     def step(self):
+        k=0
         for p, dp in self.params:
             if dp is None:
+                k += 1
                 continue
 
             # TODO: Implement the optimizer step.
@@ -136,5 +146,9 @@ class RMSProp(Optimizer):
             # average of it's previous gradients. Use it to update the
             # parameters tensor.
             # ====== YOUR CODE: ======
-            raise NotImplementedError()
+            dp += self.reg * p
+            self.rt[k] *= self.decay
+            self.rt[k] += (1- self.decay) * dp.square()
+            p -= (self.learn_rate / torch.tensor(self.rt[k] + self.eps).sqrt()) * dp
+            k += 1
             # ========================
