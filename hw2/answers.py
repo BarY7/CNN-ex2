@@ -41,21 +41,26 @@ def part2_dropout_hp():
     # TODO: Tweak the hyperparameters to get the model to overfit without
     # dropout.
     # ====== YOUR CODE: ======
-    lr = 0.0085
+    lr = 1e-3
     # ========================
     return dict(wstd=wstd, lr=lr)
 
 
 part2_q1 = r"""
 **Your answer:**
+1. They mostly match what we expected to see
+We trained the model without dropout until it overfits - achieving near perfect results on the training set but
+only about 20% for the test set.
+As expected, dropout helps us to avoid overfitting with 30 epochs - as soon as we turned on dropout (with both 
+probability values) the model improves on the test set (it overfits less w.r.t the training set).
+However dropout also makes training take more epochs - I think running with more epochs and dropout parameters
+would be interesting to check how changing the dropout value affects convergence rate and the achieved test set accuracy.
+2. Dropout with 0.4 achieved better result compared to the 0.8 one for 30 epochs. We know that when increasing the dropout, we require more epochs, but 
+here both models train for the same amount of epochs so it makes sense that the 0.4 one got better results.
+Based on the test loss graph, we can see that 0.8 is still downtrending while 0.4 starts to increase.
+Given enough epochs I believe the 0.8 dropout model could pull ahead of the 0.4 one in terms of test set accuracy.
 
 
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
 
 """
 
@@ -68,16 +73,6 @@ In order to increase the test accuracy, we need more samples such that $x_y$ is 
 Both can happen simultaneously - the score of the right class can decrease while still remaining the maximum score,
 or it can decrease and then become the maximum score (because other classes decreased further).
 In conclusion, this can happen - especially at the first few epochs before convergance is achieved.  
-
-
-
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
-
 """
 # ==============
 
