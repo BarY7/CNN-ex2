@@ -62,6 +62,53 @@ class MLP(Block):
         return f'MLP, {self.sequence}'
 
 
+class MyResPooling(nn.Module):
+
+    def __init__(self, chanels,drop):
+        super().__init__()
+
+        self.chanels = chanels
+        layers=[]
+        layers.append(nn.MaxPool2d(kernel_size=2, stride=2, dilation=1))
+        layers.append(nn.Dropout(drop))
+
+        self.down = nn.Conv2d(self.chanels, self.chanels, kernel_size=1, stride=2)
+        self.net = nn.Sequential(*layers)
+
+    def forward(self, x):
+        z = self.net(x)
+        x_1 = self.down(x)
+        out = z + x_1
+        out =nn.ReLU()(out)
+        return out
+
+class MyResBlock(nn.Module):
+
+    def __init__(self, chanels, r=-1, pool_every=-1,filters=[]):
+
+        super().__init__()
+        self.r = r
+        self.filters = filters
+        layers = []
+        for j in range(pool_every):
+            if  self.r == -1:
+                in_chan = chanels
+            else:
+                in_chan = self.filters[self.r]
+            layers.append(nn.Conv2d(in_chan, self.filters[self.r + 1], 3, padding=1))
+            layers.append(nn.BatchNorm2d(self.filters[self.r + 1]))
+            layers.append(nn.ReLU())
+            self.r = self.r + 1
+
+        self.net = nn.Sequential(*layers)
+
+    def forward(self, x):
+        z = self.net(x)
+        x_1 = F.pad(input=x, pad=(0, 0, 0, 0, self.filters[self.r]-x.shape[1], 0), mode='constant', value=0)
+        out = z + x_1
+        out = nn.ReLU()(out)
+        return out
+
 class ConvClassifier(nn.Module):
     """
     A convolutional classifier model based on PyTorch nn.Modules.
@@ -98,7 +145,23 @@ class ConvClassifier(nn.Module):
         # Use only dimension-preserving 3x3 convolutions. Apply 2x2 Max
         # Pooling to reduce dimensions.
         # ====== YOUR CODE: ======
-        # raise NotImplementedError()
+        self.calc_h = in_h
+        self.calc_w = in_w
+        r = -1
+        for i in range ((len(self.filters)//self.pool_every)):
+            for j in range(self.pool_every):
+                if r==-1:
+                    in_chan = in_channels
+                else:
+                    in_chan = self.filters[r]
+                layers.append(nn.Conv2d(in_chan, self.filters[r+1],3,padding=1))
+                layers.append(nn.ReLU())
+                r = r + 1
+
+            layers.append(nn.MaxPool2d( kernel_size=2,stride=2,dilation=1))
+            self.calc_h = (self.calc_h - 2) // 2 + 1
+            self.calc_w = (self.calc_w - 2) // 2 + 1
+
 
         # ========================
         seq = nn.Sequential(*layers)
@@ -113,7 +176,19 @@ class ConvClassifier(nn.Module):
         # You'll need to calculate the number of features first.
         # The last Linear layer should have an output dimension of out_classes.
         # ====== YOUR CODE: ======
-        # raise NotImplementedError()
+        layers.append(nn.Flatten())
+        features_num = self.filters[-1]*self.calc_h*self.calc_w
+
+        for i in range(len(self.hidden_dims)):
+            in_features = features_num
+            if i>0:
+                in_features = self.hidden_dims[i-1]
+            layers.append(nn.Linear(in_features, self.hidden_dims[i]))
+            layers.append(nn.ReLU())
+
+        layers.append(nn.Linear(self.hidden_dims[-1], self.out_classes))
+
+
         # ========================
         seq = nn.Sequential(*layers)
         return seq
@@ -123,10 +198,11 @@ class ConvClassifier(nn.Module):
         # Extract features from the input, run the classifier on them and
         # return class scores.
         # ====== YOUR CODE: ======
-        # raise NotImplementedError()
+        out = None
+        extract = self.feature_extractor(x)
+        out = self.classifier(extract)
         # ========================
         return out
-
 
 class YourCodeNet(ConvClassifier):
     def __init__(self, in_size, out_classes, filters, pool_every, hidden_dims):
@@ -137,6 +213,67 @@ class YourCodeNet(ConvClassifier):
     # For example, add batchnorm, dropout, skip connections, change conv
     # filter sizes etc.
     # ====== YOUR CODE: ======
-    # raise NotImplementedError()
+    def _make_feature_extractor(self):
+        in_channels, in_h, in_w, = tuple(self.in_size)
+
+        layers = []
+        # TODO: Create the feature extractor part of the model:
+        # [(Conv -> ReLU)*P -> MaxPool]*(N/P)
+        # Use only dimension-preserving 3x3 convolutions. Apply 2x2 Max
+        # Pooling to reduce dimensions.
+        # ====== YOUR CODE: ======
+        self.calc_h = in_h
+        self.calc_w = in_w
+        r = -1
+        for i in range ((len(self.filters)//self.pool_every)):
+            layers.append(MyResBlock(in_channels,r,self.pool_every,self.filters))
+            r = r + self.pool_every
+
+            layers.append(MyResPooling(self.filters[r],0.1))
+            self.calc_h = (self.calc_h - 2) // 2 + 1
+            self.calc_w = (self.calc_w - 2) // 2 + 1
+
+
+        # ========================
+        seq = nn.Sequential(*layers)
+        return seq
+
+    def _make_classifier(self):
+        in_channels, in_h, in_w, = tuple(self.in_size)
+
+        layers = []
+        # TODO: Create the classifier part of the model:
+        # (Linear -> ReLU)*M -> Linear
+        # You'll need to calculate the number of features first.
+        # The last Linear layer should have an output dimension of out_classes.
+        # ====== YOUR CODE: ======
+        layers.append(nn.Flatten())
+        features_num = self.filters[-1]*self.calc_h*self.calc_w
+
+        for i in range(len(self.hidden_dims)):
+            in_features = features_num
+            if i>0:
+                in_features = self.hidden_dims[i-1]
+            layers.append(nn.Linear(in_features, self.hidden_dims[i]))
+            layers.append(nn.Dropout(round(0.3+i/10,2)))
+            layers.append(nn.ReLU())
+
+        layers.append(nn.Linear(self.hidden_dims[-1], self.out_classes))
+
+
+        # ========================
+        seq = nn.Sequential(*layers)
+        return seq
+
+    def forward(self, x):
+        # TODO: Implement the forward pass.
+        # Extract features from the input, run the classifier on them and
+        # return class scores.
+        # ====== YOUR CODE: ======
+        out = None
+        extract = self.feature_extractor(x)
+        out = self.classifier(extract)
+        # ========================
+        return out
     # ========================
 
