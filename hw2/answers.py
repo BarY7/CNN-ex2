@@ -58,9 +58,8 @@ would be interesting to check how changing the dropout value affects convergence
 2. Dropout with 0.4 achieved better result compared to the 0.8 one for 30 epochs.
 Intuitively, since higher dropout means we use less of our data, we should require more epochs when increasing it.
 Here both models train for the same amount of epochs so it makes sense that the 0.4 one got better results.
-Based on the test loss graph, we can see that 0.8 is still downtrending while 0.4 starts to increase.
 Given enough epochs its possible that 0.8 dropout model could pull ahead of the 0.4 one in terms of test set accuracy.
-We tried this expriment with 80 epochs and indeed the model with 0.8 dropout got the best test set accuracy.
+We tried this expriment with 80 epochs and indeed in our case the model with 0.8 dropout got the best test set accuracy.
 
 
 
