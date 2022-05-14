@@ -149,6 +149,6 @@ class RMSProp(Optimizer):
             dp += self.reg * p
             self.rt[k] *= self.decay
             self.rt[k] += (1- self.decay) * (dp * dp)
-            p -= (self.learn_rate / torch.tensor(self.rt[k] + self.eps).sqrt()) * dp
+            p -= (self.learn_rate / (self.rt[k] + self.eps).clone().detach().sqrt()) * dp
             k += 1
             # ========================
