@@ -27,11 +27,11 @@ def part2_optim_hp(opt_name):
     # You may want to use different hyperparameters for each optimizer.
     # ====== YOUR CODE: ======
     if opt_name == 'vanilla':
-        lr = 0.01
+        lr = 0.015
     if opt_name == 'momentum':
         lr = 0.003
     if opt_name == 'rmsprop':
-        lr = 0.0001
+        lr = 0.0002
     return dict(wstd=wstd, lr=lr, reg=reg)
 
 
