@@ -13,7 +13,7 @@ import math
 
 
 def part2_overfit_hp():
-    wstd, lr, reg = 0.02 , 0.02, 0.004
+    wstd, lr, reg = 0.15 , 0.02, 0.004
     # TODO: Tweak the hyperparameters until you overfit the small dataset.
     # ====== YOUR CODE: ======
     # ========================
@@ -21,7 +21,7 @@ def part2_overfit_hp():
 
 
 def part2_optim_hp(opt_name):
-    wstd, lr, reg = 0.3 , 0.02, 0.003
+    wstd, lr, reg = 0.1 , 0.02, 0.003
 
     # TODO: Tweak the hyperparameters to get the best results you can.
     # You may want to use different hyperparameters for each optimizer.
@@ -36,7 +36,7 @@ def part2_optim_hp(opt_name):
 
 
 def part2_dropout_hp():
-    wstd, lr, = 0.02 , 0.02
+    wstd, lr, = 0.1 , 0.02
     # TODO: Tweak the hyperparameters to get the model to overfit without
     # dropout.
     # ====== YOUR CODE: ======

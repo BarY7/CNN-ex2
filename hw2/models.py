@@ -37,7 +37,7 @@ class MLP(Block):
         for i in range(len(dims) - 1):
             input_dim = dims[i]
             out_dim = dims[i+1]
-            blocks.append(Linear(input_dim,out_dim))
+            blocks.append(Linear(input_dim,out_dim, **kw))
             if(i != len(dims) - 2): # not last block
                 blocks.append(ReLU() if activation == 'relu' else Sigmoid())
                 if(dropout > 0):
