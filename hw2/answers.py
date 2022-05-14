@@ -21,17 +21,17 @@ def part2_overfit_hp():
 
 
 def part2_optim_hp(opt_name):
-    wstd, lr, reg = 0.02 , 0.02, 0.004
+    wstd, lr, reg = 0.1 , 0.02, 0.005
 
     # TODO: Tweak the hyperparameters to get the best results you can.
     # You may want to use different hyperparameters for each optimizer.
     # ====== YOUR CODE: ======
     if opt_name == 'vanilla':
-        lr = 1e-2
+        lr = 0.01
     if opt_name == 'momentum':
-        lr = 1e-3 #steps are less affected by noise
+        lr = 0.001 #steps are less affected by noise
     if opt_name == 'rmsprop':
-        lr = 1e-4
+        lr = 0.001
     # ========================
     return dict(wstd=wstd, lr=lr, reg=reg)
 
