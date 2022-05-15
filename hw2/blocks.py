@@ -82,7 +82,7 @@ class Linear(Block):
         # TODO: Create the weight matrix (w) and bias vector (b).
         # ====== YOUR CODE: ======
         self.w = torch.from_numpy(np.random.normal(scale=wstd, size=(out_features, in_features))).float()
-        self.b = torch.from_numpy(np.random.normal(scale=wstd, size=(out_features))).float() # assumed std same as weights
+        self.b = torch.zeros((out_features,)) # assumed std same as weights
         # ========================
 
         self.dw = torch.zeros_like(self.w)
