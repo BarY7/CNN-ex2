@@ -94,10 +94,6 @@ Pool every 1 works best, we assume because there are many irrelevant features an
 After playing with the parameters, we saw that the accuracy we got is reasonable compared to the default and other runs, so we used it. 
 
 The depth that produces the best accuracy is 4, we think it’s the best one because it enables the network to learn a wide range of functions meaning it is complex enough for the problem. Depth 2 is not complex enough and layers 8 and 16 couldn’t be trained explanation for this is in the next section.
-1.2) 
-With depths 8 and 16 the network couldn’t be trained, because of the vanishing gradient as we saw in class many layers can cause it. Two things which may be done are:
-a. As we saw in class residuals connections can help, the residuals connection-skip connections enable information to propagate to deeper layers in the network by identity mapping values to the output of their blocks. This helps to guarantee that in the backpropagation the gradient wouldn’t vanish. 
-b. As seen in class batch normalization can improve gradient flow and thus help the vanishing the gradient problem, the idea is that the batch normalization re-scales and re-centers the input to the activation layer helping the output of the function to be not too big or too small (depends also on the activation function) and by that helping the gradient to not be too small or too big, meaning helping to alleviate the vanishing gradient problem.
 
 """
 
@@ -106,12 +102,12 @@ The same parameters from section 1.1 were chosen for the same reasons.
 Similar to 1.1 the network couldn’t be trained with 8 layers regardless of the filter sizes and that is due to the vanishing gradient.
 With 4 layers we get similar results to 1.1 in filters sizes 32 and 64, we get the best accuracy for filter with 258.  We can assume that a large number of filters extract a lot of features combined with a high number of max-pools (which help to extract the important features) cause the accuracy to increase as the number of filters increases.
 
-With 2 layers we get similar results to 1.1 in filters sizes 32 and 64, we get the best accuracy for filter 64 . We can assume a larger number of filters extract too many features which harm the network to learn- we overfit, and a smaller number of filters don’t extract enough features-underfit. We assume the difference here between the 4 layers from the 2 layers is due to configurations in the hyper-parameters that work differently with different depths and with 2 layers we can extract fewer features because there are 
+With 2 layers we get similar results to 1.1 in filters sizes 32 and 64, we get the best accuracy for filter 64 . We can assume a larger number of filters extract too many features which harm the network to learn- we overfit, and a smaller number of filters don’t extract enough features-underfit. We assume the difference here between the 4 layers from the 2 layers is due to configurations in the hyper-parameters that work differently with different depths and with 2 layers we can extract fewer features because there are fewer layers from the data, therefore, we get different results from the 4 layers.
 
 """
 
 part3_q3 = r"""
-We chose the same parameters as 1.1 excluding layer 1 we chose pool after 1, layer 2 pool after 2, and layers 3,4 where we chose pool after-3. We chose here batch size of 100, that way we converged faster and have less noise in each step which gave us the best performance, for layer 1 we chose batch size 50 because the network converges faster that way we got the best accuracy. 
+We chose the same parameters as 1.1 excluding layer 1 we chose pool after 1, layer 2 pool after 2, and layers 3,4 where we chose pool after-3. We chose here batch size of 100, that way we converged faster and have less noise in each step which gave us the best performance, for layer 1 we chose batch size 50 (we assume because the network converges faster that way we got the best accuracy.) 
 The pools were chosen the smallest possible regarding the dimensions same as 1.1.
 Layers 3 and 4 couldn’t be trained because of the vanishing gradient, we increased the number of filters per layer therefore the size of each layer is increased, and we see the vanishing gradient phenomenon in lower numbers of L.
 We get the best result with 2 layers, with 1 layer we underfit and with higher number of layers we get the vanishing gradient.
@@ -126,9 +122,7 @@ Layer 1 pool every-1, early stopping-9,
 Layer 2 pool every-2 early stopping-12
 Layer 3 pool every-3 early stopping-15
 Layer 4 pool every-4 early stopping-18
-Batch size 100  same as the previous section 1.3 for layers 2,3,4.
-Batch size 50 for layer 1 because the network converges faster we lowered the batch size. 
-
+Batch size 100 for layers 2,3,4 and 50 for layer 1 same as the previous section 3.
 The hyperparameters were chosen after experimenting with different ones, they were chosen for the same reasons as 1.1.
 We lowered the learning rate because we wanted to smooth the loss curve graph, we tried different learning rates and got the best results with the above. The early stopping increases between layers because as the depth increase it takes more time for the model to converge so more early stopping was needed.
 
@@ -146,7 +140,5 @@ We tried different dropout parameters and got the best results by 0.1 in the Res
 We can see we reach max accuracy of 86.75 with 3 layers, we can assume that more layers overfit and fewer layers underfit. 
 We reached better results than experiment 1 in all layers, we succeeded to train with layers 3 and 4 because of the skip connections and the normalization. 
 In conclusion, we created a network with better accuracy but takes longer to coverage because of the larger number of layers and the dropout.
-
-
 
 """
