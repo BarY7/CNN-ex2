@@ -94,6 +94,10 @@ Pool every 1 works best, we assume because there are many irrelevant features an
 After playing with the parameters, we saw that the accuracy we got is reasonable compared to the default and other runs, so we used it. 
 
 The depth that produces the best accuracy is 4, we think it’s the best one because it enables the network to learn a wide range of functions meaning it is complex enough for the problem. Depth 2 is not complex enough and layers 8 and 16 couldn’t be trained explanation for this is in the next section.
+1.2) 
+With depths 8 and 16 the network couldn’t be trained, because of the vanishing gradient as we saw in class many layers can cause it. Two things which may be done are:
+a. As we saw in class residuals connections can help, the residuals connection-skip connections enable information to propagate to deeper layers in the network by identity mapping values to the output of their blocks. This helps to guarantee that in the backpropagation the gradient wouldn’t vanish. 
+b. As seen in class batch normalization can improve gradient flow and thus help the vanishing the gradient problem, the idea is that the batch normalization re-scales and re-centers the input to the activation layer helping the output of the function to be not too big or too small (depends also on the activation function) and by that helping the gradient to not be too small or too big, meaning helping to alleviate the vanishing gradient problem.
 
 """
 
