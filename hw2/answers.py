@@ -111,12 +111,10 @@ With 2 layers we get similar results to 1.1 in filters sizes 32 and 64, we get t
 """
 
 part3_q3 = r"""
-We chose the same parameters as 1.1 excluding layer 1 we chose pool after 1, layer 2 pool after 2, and layers 3,4 where we chose pool after-3. We chose here batch size of 100, that way we converged faster and have less noise in each step that giving us the best performance. 
+We chose the same parameters as 1.1 excluding layer 1 we chose pool after 1, layer 2 pool after 2, and layers 3,4 where we chose pool after-3. We chose here batch size of 100, that way we converged faster and have less noise in each step which gave us the best performance, for layer 1 we chose batch size 50 because the network converges faster that way we got the best accuracy. 
 The pools were chosen the smallest possible regarding the dimensions same as 1.1.
 Layers 3 and 4 couldn’t be trained because of the vanishing gradient, we increased the number of filters per layer therefore the size of each layer is increased, and we see the vanishing gradient phenomenon in lower numbers of L.
 We get the best result with 2 layers, with 1 layer we underfit and with higher number of layers we get the vanishing gradient.
-
-
 
 """
 
@@ -128,7 +126,8 @@ Layer 1 pool every-1, early stopping-9,
 Layer 2 pool every-2 early stopping-12
 Layer 3 pool every-3 early stopping-15
 Layer 4 pool every-4 early stopping-18
-Batch size 100  same as the previous section.
+Batch size 100  same as the previous section 1.3 for layers 2,3,4.
+Batch size 50 for layer 1 because the network converges faster we lowered the batch size. 
 
 The hyperparameters were chosen after experimenting with different ones, they were chosen for the same reasons as 1.1.
 We lowered the learning rate because we wanted to smooth the loss curve graph, we tried different learning rates and got the best results with the above. The early stopping increases between layers because as the depth increase it takes more time for the model to converge so more early stopping was needed.
@@ -144,7 +143,7 @@ Res pooling - Dropout-> MaxPool
 
 The idea of this architecture is to take ideas from Resnet and implement them in our network to get the best performance.
 We tried different dropout parameters and got the best results by 0.1 in the Res-block and increasing dropout in the linear layers starting from 0.3 and increasing by 0.1 on each linear layer (0.3,0.4 ad so on), we assume that in the first layers the network doesn’t tend to overfit in contrast to the Liner layers where there are more parameters which result to more overfit thus more dropout, the deeper we go in the network more dropout is added because deeper layers tend to overfit more.
-We can see we reach max accuracy of 86.5 with 3 layers, we can assume that more layers overfit and fewer layers underfit. 
+We can see we reach max accuracy of 86.75 with 3 layers, we can assume that more layers overfit and fewer layers underfit. 
 We reached better results than experiment 1 in all layers, we succeeded to train with layers 3 and 4 because of the skip connections and the normalization. 
 In conclusion, we created a network with better accuracy but takes longer to coverage because of the larger number of layers and the dropout.
 
