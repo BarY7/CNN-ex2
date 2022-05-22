@@ -67,12 +67,16 @@ We tried this expriment with 80 epochs and indeed in our case the model with 0.8
 part2_q2 = r"""
 **Your answer:**
 Yes, its possible. The Cross Entropy loss receives as arguments the class scores $\hat{y}$ and the real labels $y$.
-In order to increase the loss, the score of the right class (denoted $x_y$) needs to decrease. Note that the sum-log-exp
-term weights the same whether $x_y$ is the right class or not.
+In order to increase the loss, the score of the right class (denoted $x_y$) needs to decrease (its the dominant factor in the 
+cross entropy loss as we saw in the excersize)
 In order to increase the test accuracy, we need more samples such that $x_y$ is the maximum class score. 
-Both can happen simultaneously - the score of the right class can decrease while still remaining the maximum score,
-or it can decrease and then become the maximum score (because other classes decreased further).
-In conclusion, this can happen - especially at the first few epochs before convergance is achieved.  
+As there statements aren't inversely correlated, both can happen simultaneously.
+For example, to increase the loss sharply, our model can be very bad with some samples - like predicting that a cat image is a cat with low probability.
+This will cause a sharp increase in the cross entropy loss. As our model become worse (probability -> 0), the loss increases, but the accuracy won't change.
+On the other hand, we can increase the accuracy with a very minimal decline in loss. For example, predicting that a dog image is a dog only needs to be the 
+maximal class score - a slight increase could do that, leading to the accuracy increasing. 
+If we combine our two scenarios for different training test samples, we can reach a situtation where both the test accuracy and cross entropy loss increase.
+To conclude, this can happen (especially at the first few epochs before convergance is achieved).
 """
 # ==============
 
