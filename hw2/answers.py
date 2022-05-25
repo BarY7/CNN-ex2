@@ -52,8 +52,6 @@ We trained the model without dropout until it overfits - achieving near perfect 
 only about 20% for the test set.
 As expected, dropout helps us to avoid overfitting with 30 epochs - as soon as we turned on dropout (with both 
 probability values) the model improves on the test set (it overfits less w.r.t the training set).
-Seeing as dropout aims to reach a more sparse representation of the data, I think running with more epochs and dropout parameters
-would be interesting to check how changing the dropout value affects convergence rate and the achieved test set accuracy.
 2. Dropout with 0.4 achieved better result compared to the 0.8 one for 30 epochs.
 Intuitively, since higher dropout means we use less of our data, we should require more epochs when increasing it.
 Here both models train for the same amount of epochs so it makes sense that the 0.4 one got better results.
@@ -67,15 +65,17 @@ We tried this expriment with 80 epochs and indeed in our case the model with 0.8
 part2_q2 = r"""
 **Your answer:**
 Yes, its possible. The Cross Entropy loss receives as arguments the class scores $\hat{y}$ and the real labels $y$.
-In order to increase the loss, the score of the right class (denoted $x_y$) needs to decrease (its the dominant factor in the 
-cross entropy loss as we saw in the excersize)
+In order to increase the loss, either the score of the right class (denoted $x_y$) needs to decrease, or the log-sum-exp
+of all the samples needs to increase (we become less certain of our choice)
 In order to increase the test accuracy, we need more samples such that $x_y$ is the maximum class score. 
-As there statements aren't inversely correlated, both can happen simultaneously.
+As these statements aren't inversely correlated, both can happen simultaneously.
 For example, to increase the loss sharply, our model can be very bad with some samples - like predicting that a cat image is a cat with low probability.
 This will cause a sharp increase in the cross entropy loss. As our model become worse (probability -> 0), the loss increases, but the accuracy won't change.
 On the other hand, we can increase the accuracy with a very minimal decline in loss. For example, predicting that a dog image is a dog only needs to be the 
-maximal class score - a slight increase could do that, leading to the accuracy increasing. 
+maximal class score - a slight increase to the class score could do that, leading to the accuracy increasing. 
 If we combine our two scenarios for different training test samples, we can reach a situtation where both the test accuracy and cross entropy loss increase.
+Meaning, some examples can fall in the first case and have their loss increase sharply, while others become right predicitions with a slight 
+change in loss. So in total both the loss will increase and accuracy will increase.
 To conclude, this can happen (especially at the first few epochs before convergance is achieved).
 """
 # ==============
