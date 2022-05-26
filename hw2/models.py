@@ -65,7 +65,7 @@ class MLP(Block):
 
 class MyResPooling(nn.Module):
 
-    def __init__(self, chanels, drop):
+    def __init__(self, chanels):
         super().__init__()
 
         self.chanels = chanels
@@ -230,7 +230,7 @@ class YourCodeNet(ConvClassifier):
             layers.append(MyResBlock(in_channels, r, self.pool_every, self.filters))
             r = r + self.pool_every
 
-            layers.append(MyResPooling(self.filters[r], 0.1))
+            layers.append(MyResPooling(self.filters[r]))
             self.calc_h = (self.calc_h - 2) // 2 + 1
             self.calc_w = (self.calc_w - 2) // 2 + 1
 
