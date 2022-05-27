@@ -106,7 +106,7 @@ The depth that produces the best accuracy is 4, we think it’s the best one bec
 1.2) 
 With depths 8 and 16 the network couldn’t be trained, because of the vanishing gradient as we saw in class many layers can cause it. Two things which may be done are:
 a. As we saw in class residuals connections can help, the residuals connection-skip connections enable information to propagate to deeper layers in the network by identity mapping values to the output of their blocks. This helps to guarantee that in the backpropagation the gradient wouldn’t vanish. 
-b. As seen in class batch normalization can improve gradient flow and thus help the vanishing gradient problem, the idea is that the batch normalization re-scales and re-centers the input to the activation layer helping the output of the function to be not too big or too small (depends also on the activation function) and by that helping the gradient 
+b. As seen in class batch normalization can improve gradient flow and thus help the vanishing gradient problem, the idea is that the batch normalization re-scales and re-centers the input to the activation layer helping the output of the function to be not too big or too small (depends also on the activation function) and by that helping the gradient to not be too small or too big, meaning helping to alleviate the vanishing gradient problem.
 """
 
 part3_q2 = r"""
@@ -137,16 +137,19 @@ Layer 3 pool every-3 early stopping-15
 Layer 4 pool every-3 early stopping-18
 Layer 5 pool every-4 early stopping-21
 Layer 6 pool every-5 early stopping-24
-Batch size 100 for layers 2,3,4 and 50 for layer 1 same as the previous section 3.
+Batch size 100 for layers 2,3,4,5,6 and 50 for layer 1 same as the previous section 3.
 
 We lowered the learning rate because we wanted to smooth the loss curve graph, we tried different learning rates and got the best results with the above. The early stopping increases between layers because as the depth increase it takes more time for the model to converge so more early stopping was needed.
+
+
+
 
 The model:
 We added skip connection, dropout, and batch normalization layers.
 The main reason we thought of adding skip connections is the vanishing gradient we saw in previous sections. We saw an overfit in the previous sections, so we thought of adding dropout. The batch normalization layers were added for the advantages we saw in class on top of as described in 1.1 which may help the vanishing gradient effect.
 The new architecture:
-The Resnet block and Resnet pooling block have a skip connection from the start to the end.
-Res Block-(CONV ->BatchNorm-> ReLU  -> Dropout)*P
+The Resnet block and Resnet pooling block have a skip connection from the start to the end.(we decreased the diemension of the input  in the Res pooling using convolution layer with stride 2)
+Res Block-(CONV ->BatchNorm-> ReLU  -> Dropout)* P
 Res pooling - MaxPool
 [(Res Block) -> Res pooling]*(N/P) -> (Linear -> ReLU -> Dropout )*M -> Linear
 
@@ -155,6 +158,7 @@ We tried different dropout parameters and got the best results with  0.1 in the 
 We can see we reach max accuracy of 87.89 with 5 layers, we can assume that more layers overfit and fewer layers underfit. 
 We reached better results than experiment 1 in all layers, we succeeded to train with layers 3 and 4 because of the skip connections and the normalization. 
 In conclusion, we created a network with better accuracy but takes longer to coverage because of the larger number of layers and the dropout.
+
 
 
 """
