@@ -13,9 +13,12 @@ import math
 
 
 def part2_overfit_hp():
-    wstd, lr, reg = 0.15 , 0.02, 0.004
+    wstd, lr, reg = 0.0 , 0.0, 0.0
     # TODO: Tweak the hyperparameters until you overfit the small dataset.
     # ====== YOUR CODE: ======
+    wstd = 0.15
+    lr = 0.02
+    reg = 0.004
     # ========================
     return dict(wstd=wstd, lr=lr, reg=reg)
 
@@ -27,11 +30,13 @@ def part2_optim_hp(opt_name):
     # You may want to use different hyperparameters for each optimizer.
     # ====== YOUR CODE: ======
     if opt_name == 'vanilla':
-        lr = 0.015
+        lr = 0.018
     if opt_name == 'momentum':
         lr = 0.003
+        reg = 0.0025
     if opt_name == 'rmsprop':
         lr = 0.0002
+        reg = 0.001
     return dict(wstd=wstd, lr=lr, reg=reg)
 
 

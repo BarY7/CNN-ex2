@@ -295,7 +295,7 @@ class CrossEntropyLoss(Block):
         exp_x__sum_exp = exp_x / sum_exp.unsqueeze(0).t()
         exp_x__sum_exp[range(N),y] -= 1
         # dx = -sum_exp.log_softmax(dim=y)
-        dx = dout * exp_x__sum_exp / N # Not sure why we need to divide by N here!!!!
+        dx = dout * exp_x__sum_exp / N
         # ========================
 
         return dx
